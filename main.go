@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -31,12 +32,23 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
 }
 
+func handlerFail(w http.ResponseWriter, r *http.Request) {
+	http.Error(w, "Hi there, I'm an error!", http.StatusBadRequest)
+}
+
+func handlerSlow(w http.ResponseWriter, r *http.Request) {
+	time.Sleep(3 * time.Second)
+	fmt.Fprint(w, "Hi there, I respondin very slow.")
+}
+
 func main() {
 	flag.Parse()
 
 	go ServeForever(*prometheusAddr, *prometheusPath)
 
 	log.Printf("Listening on %s", *address)
+	http.HandleFunc("/slow/", handlerSlow)
+	http.HandleFunc("/fail/", handlerFail)
 	http.HandleFunc("/", handler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

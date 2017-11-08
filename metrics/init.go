@@ -7,7 +7,5 @@ const (
 )
 
 func init() {
-	prometheus.MustRegister(connDurationsHisto)
-	prometheus.MustRegister(connGauge)
-	prometheus.MustRegister(errorCounterVec)
+	prometheus.MustRegister(connDurationsHisto, connGauge, errorCounterVec)
 }

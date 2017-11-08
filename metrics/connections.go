@@ -30,5 +30,5 @@ func DecConnections() {
 
 // ConnectionTime gather the duration of a connection
 func ConnectionTime(d time.Duration) {
-	connDurationsHisto.Observe(float64(d.Nanoseconds()))
+	connDurationsHisto.Observe(float64(d / time.Millisecond))
 }

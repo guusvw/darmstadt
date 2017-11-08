@@ -44,12 +44,24 @@ func handlerFail(w http.ResponseWriter, r *http.Request) {
 	metrics.ConnectionTime(now().Sub(start))
 }
 
+func handlerInfo(w http.ResponseWriter, r *http.Request) {
+	start := now()
+
+	metrics.IncErrors(metrics.Info)
+
+	metrics.IncConnections()
+
+	http.Error(w, "Hi there, I'm an error!", http.StatusBadRequest)
+
+	metrics.ConnectionTime(now().Sub(start))
+}
+
 func handlerSlow(w http.ResponseWriter, r *http.Request) {
 	start := now()
 
 	metrics.IncConnections()
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(3 * time.Millisecond)
 	fmt.Fprint(w, "Hi there, I respondin very slow.")
 
 	metrics.ConnectionTime(now().Sub(start))
@@ -63,6 +75,7 @@ func main() {
 	log.Printf("Listening on %s", *address)
 	http.HandleFunc("/slow/", handlerSlow)
 	http.HandleFunc("/fail/", handlerFail)
+	http.HandleFunc("/info/", handlerInfo)
 	http.HandleFunc("/", handler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

@@ -8,7 +8,7 @@ import (
 
 var (
 	connDurationsHisto = prometheus.NewHistogram(prometheus.HistogramOpts{
-		Name: Prefix + "connection_durations_histogram_seconds",
+		Name: Prefix + "connection_durations_histogram_nanoseconds",
 		Help: "Connection duration distributions.",
 	})
 	connGauge = prometheus.NewGauge(
@@ -30,5 +30,5 @@ func DecConnections() {
 
 // ConnectionTime gather the duration of a connection
 func ConnectionTime(d time.Duration) {
-	connDurationsHisto.Observe(float64(d.Nanoseconds() / 1000))
+	connDurationsHisto.Observe(float64(d.Nanoseconds()))
 }
